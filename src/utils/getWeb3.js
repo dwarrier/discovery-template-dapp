@@ -6,11 +6,22 @@ const getWeb3 = () =>
     window.addEventListener("load", async () => {
       // Modern dapp browsers...
       if (window.ethereum) {
-          const provider = new Web3.providers.HttpProvider(
-              "http://127.0.0.1:9545"
-          );
-          const web3 = new Web3(provider);
-          resolve(web3);
+        console.log("Found window.ethereum");
+        const provider = new Web3.providers.HttpProvider(
+          "http://127.0.0.1:9545"
+        );
+        //const web3 = new Web3(provider);
+        const web3 = new Web3(window.ethereum);
+        resolve(web3);
+        try {
+          // Request account access if needed
+          // TODO: if the user just exits here, it doesn't throw an error.
+          let accounts = await window.ethereum.enable();
+          console.log("Connected to window.ethereum account: " + accounts[0]);
+        } catch (error) {
+          // User denied account access...
+          console.log(error);
+        }
       }
       // Legacy dapp browsers...
       else if (window.web3) {
